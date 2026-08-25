@@ -13,7 +13,7 @@ skills/<skill-name>/
   references/       long docs the skill reads on demand
   agents/           optional per-harness metadata (e.g. openai.yaml)
 scripts/            repo tooling (install, list)
-docs/               human-facing notes about a skill, not read by agents
+.claude-plugin/     Claude Code plugin + marketplace manifests
 ```
 
 ## SKILL.md rules

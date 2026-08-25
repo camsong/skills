@@ -108,10 +108,10 @@ for target in "${TARGETS[@]}"; do
 
     if [ "$MODE" = "copy" ]; then
       cp -R "$src" "$dest"
-      echo "copied  $name -> $dest"
+      echo "copied  $dest <- $src"
     else
       ln -sfn "$src" "$dest"
-      echo "linked  $name -> $dest"
+      echo "linked  $dest -> $src"
     fi
   done
 done

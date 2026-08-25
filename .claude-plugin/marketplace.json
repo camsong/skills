@@ -1,0 +1,23 @@
+{
+  "name": "camsong",
+  "owner": {
+    "name": "camsong",
+    "url": "https://github.com/camsong"
+  },
+  "description": "Everyday agent skills, installable as a Claude Code plugin.",
+  "plugins": [
+    {
+      "name": "camsong-skills",
+      "source": "./",
+      "description": "Youdao wordbook export, YouTube transcripts, and YouTube-to-long-form-Chinese-article.",
+      "category": "productivity",
+      "keywords": [
+        "skills",
+        "youtube",
+        "transcript",
+        "vocabulary",
+        "chinese"
+      ]
+    }
+  ]
+}
