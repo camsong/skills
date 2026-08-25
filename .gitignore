@@ -141,3 +141,27 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# ---------------------------------------------------------------
+# Skills repo: never commit credentials or exported personal data
+# ---------------------------------------------------------------
+
+# Youdao wordbook: cached login cookie + exported vocabulary
+.youdao_cookie.json
+**/.youdao_cookie.json
+*cookie*.txt
+*cookies*.json
+storage-state*.json
+youdao-wordbook.*
+review.md
+
+# YouTube: fetched transcripts / scratch working dirs
+yt-*/
+*.ts.txt
+*.srt
+*.meta.txt
+
+# Local agent state
+.claude/
+.codex/
+.DS_Store
