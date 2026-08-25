@@ -1,0 +1,7 @@
+interface:
+  display_name: "YouTube 阅读版"
+  short_description: "把 YouTube 视频重写成可以替代观看的中文长文"
+  default_prompt: "Use $youtube-reading-page to turn this YouTube video into a long-form Chinese reading version."
+
+policy:
+  allow_implicit_invocation: true
