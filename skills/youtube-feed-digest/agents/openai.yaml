@@ -1,0 +1,7 @@
+interface:
+  display_name: "YouTube 推荐流摘要"
+  short_description: "列出你的 YouTube 推荐和订阅，挑几个出要点摘要"
+  default_prompt: "Use $youtube-feed-digest to show me what's on my YouTube feed so I can pick a few to summarize."
+
+policy:
+  allow_implicit_invocation: true
