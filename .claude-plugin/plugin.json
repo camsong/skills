@@ -1,7 +1,7 @@
 {
   "name": "camsong-skills",
   "version": "0.1.0",
-  "description": "A small set of everyday agent skills: export a Youdao wordbook, fetch YouTube transcripts, and rewrite a YouTube video into a long-form Chinese reading version.",
+  "description": "A small set of everyday agent skills: export a Youdao wordbook, browse and summarize your YouTube feed, fetch transcripts, and rewrite a video into a long-form Chinese reading version.",
   "author": {
     "name": "camsong",
     "url": "https://github.com/camsong"
@@ -20,6 +20,7 @@
   "skills": [
     "./skills/youdao-wordbook",
     "./skills/youtube-transcript-api",
-    "./skills/youtube-reading-page"
+    "./skills/youtube-reading-page",
+    "./skills/youtube-feed-digest"
   ]
 }

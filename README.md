@@ -9,10 +9,13 @@
 | Skill | 干什么 | 什么时候会被触发 |
 |---|---|---|
 | [youdao-wordbook](skills/youdao-wordbook/SKILL.md) | 把有道单词本导出成 JSONL / CSV / Markdown，带释义、语言方向、添加时间 | 「同步一下我的有道单词本」「备份/分析我的生词」 |
+| [youtube-feed-digest](skills/youtube-feed-digest/SKILL.md) | 列出你自己的 YouTube 推荐流和订阅更新，你挑几个，它给每个写一份带时间码的要点摘要 | 「今天 YouTube 推荐了什么」「刷一下 YouTube」「挑几个总结一下」 |
 | [youtube-transcript-api](skills/youtube-transcript-api/SKILL.md) | 抓 YouTube 字幕，能挑语言、能翻译，输出纯文本 / 带时间码 / JSON / SRT | 给一个 YouTube 链接，要字幕或文字稿 |
 | [youtube-reading-page](skills/youtube-reading-page/SKILL.md) | 把 YouTube 视频重写成一篇能替代观看的中文长文，按主题分节，最后抽出可复用的框架 | 给一个 YouTube 链接，说「整理成文章」「做个阅读版」 |
 
-后两个是接起来用的：`youtube-reading-page` 自己不抓字幕，它调 `youtube-transcript-api`。只要两个都装了就能自动找到对方。
+三个 YouTube skill 是一条链：`youtube-transcript-api` 负责取字幕，`youtube-feed-digest` 和 `youtube-reading-page` 都不自己抓，各自去调它。装在一起就能自动找到对方，不用配路径。
+
+用起来大致是：`youtube-feed-digest` 帮你从一堆推荐里筛出想看的，看完摘要还想细读某一个，再让 `youtube-reading-page` 出长文。
 
 ## 怎么装
 
@@ -68,11 +71,13 @@ cd skills
 
 `youdao-wordbook` 只用 Python 标准库，有 Python 3.9 就够了。
 
-两个 YouTube skill 需要 `uv`。脚本里写了 PEP 723 依赖声明，`uv` 第一次跑的时候自己把依赖拉下来缓存住，不用建 venv，也不往全局装东西。
+三个 YouTube skill 都需要 `uv`。脚本里写了 PEP 723 依赖声明，`uv` 第一次跑的时候自己把依赖拉下来缓存住，不用建 venv，也不往全局装东西。
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
+
+`youtube-feed-digest` 另外还要求你的浏览器已经登录 YouTube。它用 yt-dlp 从浏览器的 cookie 库里借登录态，只读，不落盘任何凭证；macOS 上第一次读可能会弹一次钥匙串授权。默认读 Chrome，用 `--browser safari|firefox|edge|brave` 换别的。
 
 还有一件事得先说：YouTube 的字幕接口会封机房 IP。家里或者办公室的网正常能抓，放在云主机上跑基本必然报 `RequestBlocked`，那种情况得挂一个住宅代理，脚本有 `--proxy` 参数。
 
