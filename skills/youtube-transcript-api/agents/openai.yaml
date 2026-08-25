@@ -1,0 +1,7 @@
+interface:
+  display_name: "YouTube Transcript"
+  short_description: "Fetch a YouTube video's captions as text, timestamps, or SRT"
+  default_prompt: "Use $youtube-transcript-api to get the transcript of this YouTube video."
+
+policy:
+  allow_implicit_invocation: true
