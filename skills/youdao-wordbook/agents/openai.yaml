@@ -1,0 +1,7 @@
+interface:
+  display_name: "Youdao Wordbook"
+  short_description: "导出有道单词本复习数据"
+  default_prompt: "Use $youdao-wordbook to export my Youdao wordbook into a review-friendly CSV."
+
+policy:
+  allow_implicit_invocation: true
