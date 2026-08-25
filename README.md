@@ -16,13 +16,31 @@
 
 ## 怎么装
 
+两条路，按你想不想改它来选。
+
+**拿来就用**：用 skills 安装器，它把文件拷进各家 agent 的 skills 目录。
+
+```bash
+npx skills add camsong/skills
+```
+
+它会问你装哪几个、装到哪些 agent。不想走交互就把参数给全：
+
+```bash
+npx skills add camsong/skills -g -s '*' -a claude-code -y
+```
+
+`-a` 一次只认一个 agent，装多家就多跑几遍，agent 名分别是 `claude-code`、`codex`、`cursor`（是 `claude-code`，不是 `claude`）。这条路是拷贝，以后更新靠 `npx skills update`。
+
+**想自己改**：clone 下来建软链。
+
 ```bash
 git clone https://github.com/camsong/skills.git
 cd skills
 ./scripts/install.sh
 ```
 
-默认建软链，所以以后 `git pull` 一次，装好的 skills 全跟着更新。想要一份不会变的拷贝，加 `--copy`。
+这样改仓库里的文件，各家 agent 立刻就是改完的版本，`git pull` 一次全都跟着更新。想要一份不会变的拷贝，加 `--copy`。
 
 只装其中一个：
 
@@ -36,7 +54,7 @@ cd skills
 ./scripts/install.sh --target ~/.cursor/skills
 ```
 
-不加 `--target` 的时候，脚本往 `~/.claude/skills`（Claude Code）和 `~/.agents/skills`（Codex 以及其他兼容 Agent Skills 的 harness）里装，哪个目录已经存在就装哪个。
+不加 `--target` 的时候，脚本往 `~/.claude/skills`（Claude Code）和 `~/.agents/skills`（Codex、Cursor 以及其他兼容 Agent Skills 的 harness）里装，哪个目录已经存在就装哪个。
 
 看一眼都有什么：
 
@@ -44,7 +62,7 @@ cd skills
 ./scripts/list-skills.sh
 ```
 
-Claude Code 也可以当插件装，仓库里的 `.claude-plugin/` 就是给它用的。
+两条路别混着用，会装成两份。Claude Code 还可以当插件装，仓库里的 `.claude-plugin/` 就是给它用的。
 
 ## 跑起来还需要什么
 
