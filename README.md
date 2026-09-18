@@ -1,5 +1,7 @@
 # skills
 
+[![skills.sh](https://skills.sh/b/camsong/skills)](https://skills.sh/camsong/skills)
+
 我自己天天在用的 agent skills。装上之后，Claude Code、Codex、Cursor 都能直接调。
 
 一个 skill 就是一个带说明书的文件夹：`SKILL.md` 写清楚它干什么、什么时候该用、怎么跑，旁边放上它要用到的脚本和参考文档。Agent 看描述觉得对得上，就自己把它加载进来，不用你手动喊。
@@ -21,7 +23,7 @@
 
 两条路，按你想不想改它来选。
 
-**拿来就用**：用 skills 安装器，它把文件拷进各家 agent 的 skills 目录。
+**拿来就用**：用 [skills.sh](https://skills.sh/camsong/skills) 的安装器，一条命令装进各家 agent 的 skills 目录。
 
 ```bash
 npx skills add camsong/skills
@@ -30,10 +32,21 @@ npx skills add camsong/skills
 它会问你装哪几个、装到哪些 agent。不想走交互就把参数给全：
 
 ```bash
-npx skills add camsong/skills -g -s '*' -a claude-code -y
+npx skills add camsong/skills -g -s '*' -a claude-code codex cursor -y
 ```
 
-`-a` 一次只认一个 agent，装多家就多跑几遍，agent 名分别是 `claude-code`、`codex`、`cursor`（是 `claude-code`，不是 `claude`）。这条路是拷贝，以后更新靠 `npx skills update`。
+- `-g` 装到用户级（全局），不加就装进当前项目。
+- `-s` 挑 skill，`'*'` 是全部；只要一个就写名字，比如 `-s youtube-reading-page`。
+- `-a` 挑 agent，可以一次写多个，`'*'` 是全部。agent 名是 `claude-code`，不是 `claude`。
+- 懒得挑就用 `--all`，等于 `-s '*' -a '*' -y`。
+
+装之前想先看看仓库里有哪些：
+
+```bash
+npx skills add camsong/skills -l
+```
+
+以后更新用 `npx skills update`，卸载用 `npx skills remove`。
 
 **想自己改**：clone 下来建软链。
 
