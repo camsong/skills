@@ -34,7 +34,7 @@ description: Turn a YouTube video into a long-form Chinese "reading version" —
 YouTube 自动字幕是纯声学解码，人名、产品名、缩写和新术语经常整个听错，而且错法在全片不统一。
 能直接听音频的大模型会结合上下文，这类词的准确率明显更高。所以只要用户有 Gemini 3.8 这类能听音频的模型的 key，就先用它重新转写，
 和字幕逐处对比、投票，合成一份修正版 transcript，**第 2 步读的是这份，不是原始字幕**。
-按公开价两轮合计约每小时音频 $0.5，耗时十来分钟。
+按公开价两轮合计约每小时音频 0.5 美元，耗时十来分钟。
 
 **先确认有没有 key，没有就整步跳过。** 看环境变量 `GEMINI_KEY`（Vertex AI express mode 的 API key）。
 非交互 shell 看不到时，再用用户的登录 shell 查一次（`$SHELL -ic 'echo ${GEMINI_KEY:+set}'`），不要打印 key 本身。
