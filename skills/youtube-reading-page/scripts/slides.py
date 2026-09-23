@@ -40,6 +40,8 @@ def sheet(images, labels, out, cols=3, cell=(640, 400), pad=8, bg=(128, 128, 128
 
 
 def main():
+    if len(sys.argv) < 2:
+        sys.exit(__doc__)
     cmd, a = sys.argv[1], sys.argv[2:]
     if cmd == 'sheet':
         video, out, times = a[0], a[1], a[2:]
