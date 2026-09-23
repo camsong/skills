@@ -211,7 +211,7 @@ def render_article(article: dict) -> tuple[str, list[dict], list[str]]:
     embed_ids: list[str] = []
     lines: list[str] = []
 
-    title = article.get("title") or ""
+    title = (article.get("title") or "").strip()
     if title:
         lines.append(f"# {title}")
         lines.append("")
@@ -255,6 +255,9 @@ def render_article(article: dict) -> tuple[str, list[dict], list[str]]:
                     embed_ids.append(tweet_id)
                     lines.append(f"[embedded post {tweet_id}](https://x.com/i/status/{tweet_id})")
                     lines.append("")
+            elif etype == "DIVIDER":
+                lines.append("---")
+                lines.append("")
             prev_kind = kind
             continue
 
@@ -354,7 +357,7 @@ def summarize(tweet: dict, *, with_article: bool = True) -> dict:
         markdown, images, embed_ids = render_article(article)
         post["article"] = {
             "id": article.get("rest_id") or article.get("id"),
-            "title": article.get("title"),
+            "title": (article.get("title") or "").strip() or None,
             "preview_text": article.get("preview_text"),
             "markdown": markdown,
             "images": images,
