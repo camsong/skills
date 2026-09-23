@@ -13,7 +13,7 @@
 | [youdao-wordbook](skills/youdao-wordbook/SKILL.md) | 把有道单词本导出成 JSONL / CSV / Markdown，带释义、语言方向、添加时间 | 「同步一下我的有道单词本」「备份/分析我的生词」 |
 | [youtube-feed-digest](skills/youtube-feed-digest/SKILL.md) | 列出你自己的 YouTube 推荐流和订阅更新，你挑几个，它给每个写一份带时间码的要点摘要 | 「今天 YouTube 推荐了什么」「刷一下 YouTube」「挑几个总结一下」 |
 | [youtube-transcript-api](skills/youtube-transcript-api/SKILL.md) | 抓 YouTube 字幕，能挑语言、能翻译，输出纯文本 / 带时间码 / JSON / SRT | 给一个 YouTube 链接，要字幕或文字稿 |
-| [youtube-reading-page](skills/youtube-reading-page/SKILL.md) | 把 YouTube 视频重写成一篇能替代观看的中文长文，按主题分节，最后抽出可复用的框架 | 给一个 YouTube 链接，说「整理成文章」「做个阅读版」 |
+| [youtube-reading-page](skills/youtube-reading-page/SKILL.md) | 把 YouTube 视频重写成一篇能替代观看的中文长文，按主题分节、配幻灯片截图，最后抽出可复用的框架；有 Gemini key 时先用它重新转写并和字幕交叉核对 | 给一个 YouTube 链接，说「整理成文章」「做个阅读版」 |
 
 三个 YouTube skill 是一条链：`youtube-transcript-api` 负责取字幕，`youtube-feed-digest` 和 `youtube-reading-page` 都不自己抓，各自去调它。装在一起就能自动找到对方，不用配路径。
 
