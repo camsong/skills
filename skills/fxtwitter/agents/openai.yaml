@@ -1,0 +1,7 @@
+interface:
+  display_name: "FxTwitter"
+  short_description: "Fetch an X post or X Article, including text and images"
+  default_prompt: "Use $fxtwitter to read this X post, including the article text and images."
+
+policy:
+  allow_implicit_invocation: true

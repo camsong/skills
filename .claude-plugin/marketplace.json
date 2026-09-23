@@ -9,14 +9,16 @@
     {
       "name": "camsong-skills",
       "source": "./",
-      "description": "Youdao wordbook export, YouTube transcripts, and YouTube-to-long-form-Chinese-article.",
+      "description": "Youdao wordbook export, YouTube transcripts, YouTube-to-long-form-Chinese-article, and X post and Article fetch.",
       "category": "productivity",
       "keywords": [
         "skills",
         "youtube",
         "transcript",
         "vocabulary",
-        "chinese"
+        "chinese",
+        "twitter",
+        "x"
       ]
     }
   ]
