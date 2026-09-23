@@ -29,6 +29,18 @@ description: Turn a YouTube video into a long-form Chinese "reading version" —
 
 脚本失败的两种常见情况：字幕被关闭（`TranscriptsDisabled`），或 IP 被封（`RequestBlocked`，机房 IP 必然触发）。两种都要如实告诉用户，不要转而去猜视频内容或从别处找摘要来填。
 
+### 1a. 问一句有没有原版幻灯片
+
+演讲类视频，开工前问用户一次：手上有没有讲者的原版幻灯片（PDF、HTML 或分享链接）。视频里一两秒就翻过的页、
+被摄像头挡住的字、讲者没念出来的数字，原版里都在。
+
+- **有**：按页抽出文字，存成 `<工作目录>/deck.txt`，每页前面标页码（PDF 用 `pdftotext -layout`；
+  HTML 按每页的容器元素去掉标签，常见是 `<section>`）。之后名字怎么拼、数字多少、一张列表有几条，
+  都以它为准，它比字幕和 Gemini 转写都可靠。截图也从原版渲染，见第 5b 步。
+- **没有**：照常往下走，第 5b 步从视频里清点幻灯片。
+
+原版幻灯片和音视频一样只放工作目录。
+
 ### 1b. 用 Gemini 做字幕双校验（仅当用户有 Gemini key）
 
 YouTube 自动字幕是纯声学解码，人名、产品名、缩写和新术语经常整个听错，而且错法在全片不统一。
@@ -71,7 +83,7 @@ python3 "$SKILL/scripts/merge_transcript.py" <工作目录> <工作目录>/<id>.
    ```bash
    python3 "$SKILL/scripts/asr_probe.py" <工作目录> <m:ss-m:ss> <m:ss-m:ss> ...
    ```
-   两次一致才算定。第 5b 步截图时看到的幻灯片文字比两种转写都可靠，写明了就直接采纳。
+   两次一致才算定。幻灯片上的文字（原版 `deck.txt`，或第 5b 步截图里读到的）比两种转写都可靠，写明了就直接采纳。
 2. **统一 `NAME VARIANTS`。** 脚本会把拼写相近的大写词列成一组（同一个产品名的大小写变体、音近变体会落在一组）。
    投票挡不住这种错：字幕和 Gemini 可能独立地听成同一个错误的词，两票一致也不代表对。
    按幻灯片或短片段采样定下正确写法，再重跑合并并加上覆盖规则：
@@ -136,24 +148,57 @@ python3 "$SKILL/scripts/merge_transcript.py" <工作目录> <工作目录>/<id>.
 
 读者喜欢有图的版本。演讲类视频的幻灯片本身就是讲者画好的图，比自己重画可靠。
 
+先拿到**完整的幻灯片清单**，再选图。清单是第 5d 步对账的底账：讲者一两秒就翻过的页，
+常常正是反面案例、证据清单这类没口头展开的内容，只在小节起点附近取帧一定会漏。
+
+**有原版幻灯片（第 1a 步）**：按页渲染，不从视频截。渲染图没有鼠标、选区高亮和摄像头。
+
+- PDF：`pdftoppm -r 200 -png <deck.pdf> <工作目录>/slide`
+- HTML：用无头 Chrome / Chromium 逐页截图。先看一眼 deck 的脚本怎么跳页，多数支持 URL hash（`#N` 或 `#/N`）。
+  deck 按窗口缩放或给页面加了阴影时，复制一份，注入一段 CSS 把舞台固定成原始尺寸、去掉阴影，再截：
+  ```bash
+  "$CHROME" --headless=new --hide-scrollbars --window-size=<页宽>,<页高> --force-device-scale-factor=2 \
+    --virtual-time-budget=4000 --screenshot=<工作目录>/slide-NN.png "file://<deck.html>#N"
+  ```
+  `$CHROME` 指本机 Chrome 或 Chromium 的可执行文件。
+- 清单就是原版的页码。
+
+**只有视频**：
+
 ```bash
 "$SKILL/scripts/fetch_media.sh" "<URL>" <工作目录> video
-python3 "$SKILL/scripts/slides.py" sheet <video> <sheet.png> <m:ss> <m:ss> ...   # 每个小节起点附近各取 1–2 帧
-python3 "$SKILL/scripts/slides.py" grid  <video> <m:ss> <grid.png>                 # 选中的帧逐张加坐标网格
+python3 "$SKILL/scripts/slides.py" scan  <video> <工作目录>/scan [--region x0,y0,x1,y1]  # 全片去重，得到清单
+python3 "$SKILL/scripts/slides.py" sheet <video> <sheet.png> <m:ss> <m:ss> ...           # 放大看清单里的帧
+python3 "$SKILL/scripts/slides.py" grid  <video> <m:ss> <grid.png>                         # 选中的帧逐张加坐标网格
 python3 "$SKILL/scripts/slides.py" crop  <video> <m:ss> <x0,y0,x1,y1> <out.png> [--mask <cx,cy,r> --bg <x,y>]
-python3 "$SKILL/scripts/slides.py" check <check.png> <所有裁好的图>
 ```
 
+- `scan` 每秒取一帧，画面一变就收进清单，写出 `times.txt` 和联系表 `scan_NN.png`。一小时约半分钟。
+  讲者摄像头或字幕在动时，用 `--region` 只比较幻灯片区域，不然它们的变化也会算成新的一页。
+- 幻灯片页脚有"n / N"页码时，用它对账：清单要覆盖 1 到 N 每一页。缺页就在相邻两页之间用 `sheet` 逐秒补看。
 - 用 Read 看 sheet 选帧，看 grid 读裁剪坐标。不要凭缩略图估坐标，那样很容易把标题或边框切掉。
 - 讲者摄像头圆框常压在幻灯片右下角。裁剪框要按**幻灯片内容**的完整范围定，重叠处用
   `--mask` 以幻灯片底色填平，不要为了躲摄像头把标题或框切掉。字幕条一律裁掉。
-- **交付前必须跑 `check` 并看一遍**：每张的标题、边框、脚注都完整，没有摄像头和字幕残留。
-- 选图标准和数量见 writing-guide 的「插图」一节。
+
+两条路最后都跑 `python3 "$SKILL/scripts/slides.py" check <check.png> <所有图>` 并看一遍：
+每张的标题、边框、脚注都完整，没有摄像头、字幕和鼠标选区残留。选图标准和数量见 writing-guide 的「插图」一节。
 
 ### 5c. 自查措辞
 
 TL;DR 和标题最容易说满。逐条回到原话核对：不要加原话里没有的顺序（"她做的第一件事"）、
 不要放大数字（原话给的是具体数字，就不要改写成"几千""上万"）、不要加原话没有的限定词（"专职""唯一""所有"）。
+
+### 5d. 覆盖审计
+
+出页面前对三本账。三本都对平才算写完：
+
+1. **幻灯片账**：清单里每一页，要么正文里有对应内容，要么记下不收的理由（封面、目录、分隔页、和别页重复）。
+   只在幻灯片上出现、讲者没口头展开的内容写进正文时，说明它来自幻灯片。
+2. **问答账**：把 Q&A 里每个真实提问列出来，带时间码。每一条要么写进正文，要么并进某一组，要么记下为什么不收。
+   问答部分只收现场真问过的问题，主讲和幻灯片里的内容留在各自的小节。
+3. **论断账**：把正文、transcript 和幻灯片文字交给一个新上下文的子代理（harness 不支持子代理就自己换个视角逐条过），
+   让它逐条找四类问题：引号里不是原话，或说话人归错了；数字和原文对不上；讲者的限定、条件或"我不确定"被删掉了；
+   transcript 和幻灯片里都找不到出处。它交回的清单逐条改完，清单清零。
 
 ### 6. 出页面
 
@@ -178,10 +223,11 @@ writing-guide 的「页面设计」一节自己定。
 走 `lark-doc` skill 的创建工作流，用 XML 写。注意几点：
 
 - 在工作目录（scratchpad）里执行 `init-draft`，否则草稿文件夹会落进用户仓库根目录。
-- 截图用 `<img path="@<绝对路径>" caption="一句话说明（视频 mm:ss 幻灯片）"/>` 插在对应段落后。
+- 截图用 `<img path="@<路径>" caption="一句话说明"/>` 插在对应段落后，图注格式见 writing-guide「插图」。
+  路径在执行目录内可写成 `@./相对路径`，否则写绝对路径。
 - 之后的修改一律用 `docs +update` 局部改（`block_replace` / `block_insert_after` / `block_delete`），
-  不要重建文档。改标题用 `block_replace` 替换 title 块，服务端可能回"没有变更"的警告，
-  重新 fetch 确认即可。
+  不要重建文档。换图时对原来的 img 块逐张 `block_replace`，位置不变。改标题用 `block_replace` 替换 title 块，
+  服务端可能回"没有变更"的警告，重新 fetch 确认即可。
 
 三条路的正文内容完全一样，只有外壳不同。
 
@@ -195,7 +241,7 @@ writing-guide 的「页面设计」一节自己定。
 
 ## 三条不可让步的规则
 
-**不新增事实。** 页面里的每一个论断都必须能在转录、画面上的幻灯片或视频元数据里找到出处。不要补充你知道的背景知识，不要引入视频没提到的例子，不要把"他大概是这个意思"写成他说了。转录含混的地方，换成不依赖那个词的说法，不要猜。
+**不新增事实。** 页面里的每一个论断都必须能在转录、幻灯片（原版或画面上的）或视频元数据里找到出处。不要补充你知道的背景知识，不要引入视频没提到的例子，不要把"他大概是这个意思"写成他说了。转录含混的地方，换成不依赖那个词的说法，不要猜。
 
 **不浓缩。** 这是唯一一个"写长"优先于"写短"的任务。当你想把三段合成一句时，方向反了——应该是把一句展开成三段，用的是转录里本来就有的因果链、数字、限定条件和反例。
 
