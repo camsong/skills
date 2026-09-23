@@ -14,6 +14,7 @@
 | [youtube-feed-digest](skills/youtube-feed-digest/SKILL.md) | 列出你自己的 YouTube 推荐流和订阅更新，你挑几个，它给每个写一份带时间码的要点摘要 | 「今天 YouTube 推荐了什么」「刷一下 YouTube」「挑几个总结一下」 |
 | [youtube-transcript-api](skills/youtube-transcript-api/SKILL.md) | 抓 YouTube 字幕，能挑语言、能翻译，输出纯文本 / 带时间码 / JSON / SRT | 给一个 YouTube 链接，要字幕或文字稿 |
 | [youtube-reading-page](skills/youtube-reading-page/SKILL.md) | 把 YouTube 视频重写成一篇能替代观看的中文长文，按主题分节、配幻灯片截图，最后抽出可复用的框架；有 Gemini key 时先用它重新转写并和字幕交叉核对 | 给一个 YouTube 链接，说「整理成文章」「做个阅读版」 |
+| [fxtwitter](skills/fxtwitter/SKILL.md) | 用 api.fxtwitter.com 取 X 帖子和 X Article，含正文、图片、被回复的那条，以及文章里嵌进去的帖 | 给一个 x.com 或 twitter.com 链接，要看帖、总结，或把文章和配图存下来 |
 
 三个 YouTube skill 是一条链：`youtube-transcript-api` 负责取字幕，`youtube-feed-digest` 和 `youtube-reading-page` 都不自己抓，各自去调它。装在一起就能自动找到对方，不用配路径。
 
@@ -82,7 +83,7 @@ cd skills
 
 ## 跑起来还需要什么
 
-`youdao-wordbook` 只用 Python 标准库，有 Python 3.9 就够了。
+`youdao-wordbook` 和 `fxtwitter` 只用 Python 标准库，有 Python 3.9 就够了。`fxtwitter` 走公开的 api.fxtwitter.com，不用登录，也不用 API key。
 
 三个 YouTube skill 都需要 `uv`。脚本里写了 PEP 723 依赖声明，`uv` 第一次跑的时候自己把依赖拉下来缓存住，不用建 venv，也不往全局装东西。
 
